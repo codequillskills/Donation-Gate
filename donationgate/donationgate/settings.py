@@ -77,7 +77,12 @@ WSGI_APPLICATION = 'donationgate.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = None
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.dummy',
+    }
+}
+
 
 
 # Password validation
