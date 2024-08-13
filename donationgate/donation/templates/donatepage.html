@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+
+<body>
+    <form id="razorpay-form">
+        <script>
+            var options = {
+                "key": "{{ key_id }}",
+                "amount": "{{ amount }}",
+                "currency": "INR",
+                "name": "{{ name }}",
+                "description": "Test Transaction",
+                "image": "https://example.com/your_logo",
+                "order_id": "{{ order_id }}",
+                "handler": function (response) {
+                    window.location.href = "/success/?payment_id=" + response.razorpay_payment_id + "&order_id=" + response.razorpay_order_id + "&signature=" + response.razorpay_signature;
+                },
+                "prefill": {
+                    "name": "{{ name }}",
+                    "email": "{{ email }}",
+                    "contact": "{{ phone }}"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+            rzp1.on('payment.failed', function (response) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", "/failure/?code=" + response.error.code + "&description=" + response.error.description, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        window.location.href = "/failure/?code=" + response.error.code + "&description=" + response.error.description;
+                    }
+                };
+                xhr.send();
+            });
+        </script>
+    </form>
+</body>
+
+</html>
